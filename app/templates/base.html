@@ -3,15 +3,18 @@
         {% if title %}
         <title>{{ title }} - Task Manager</title>
         {% else %}
-        <title>Task Manager</title>
+        <title>Welcome to Task Manager</title>
         {% endif %}
     </head>
     <body>
         <div>
             Task Manager:
             <a href="{{ url_for('index') }}">Home</a>
+            {% if current_user.is_anonymous %}
             <a href="{{ url_for('login') }}">Login</a>
-            <a href="{{ url_for('registration') }}">Registration</a>
+            {% else %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% endif %}
         </div>
         {% block content %}
         {% endblock %}
