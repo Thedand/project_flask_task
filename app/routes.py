@@ -18,6 +18,7 @@ def before_request():
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home', methods=['GET', 'POST'])
+@login_required
 def index():
     return render_template('home.html', title='Home')
 

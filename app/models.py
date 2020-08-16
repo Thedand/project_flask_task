@@ -27,7 +27,7 @@ class User(UserMixin, db.Model):
     is_active = db.Column(db.Boolean, default=False)
     is_superuser = db.Column(db.Boolean, default=False)
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
-    task = db.relationship('Task', backref="owner", lazy="dynamic")
+    tasks = db.relationship('Task', backref="author", lazy="dynamic")
 
     def __repr__(self):
         return "<User {}>".format(self.username)
@@ -42,8 +42,8 @@ class User(UserMixin, db.Model):
 # Role
 class Role(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(100), unique=True)
-    description = db.Column(db.String(255))
+    name = db.Column(db.String(64), unique=True)
+    description = db.Column(db.String(64))
 
 
 # Task Model
@@ -58,8 +58,7 @@ class Task(db.Model):
     created_by = db.Column(db.DateTime, default=datetime.utcnow)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     date_updated = db.Column(db.DateTime)
-    date_completed = db.Column(db.DateTime)
-    is_completed = db.Column(db.Boolean, default=False, nullable=False)
+    date_delete = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     def __repr__(self):
