@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, abort
+from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 
@@ -39,6 +40,18 @@ def login():
             next_page = url_for('index')
         return redirect(next_page)
     return render_template('login.html', title='Login', form=form)
+
+
+class Controller(ModelView):
+    def is_accessible(self):
+        if current_user.is_superuser:
+            return current_user.is_authenticated
+        else:
+            return abort(404)
+
+
+def not_auth():
+    return "not!"
 
 
 @app.route('/registration', methods=['GET', 'POST'])
