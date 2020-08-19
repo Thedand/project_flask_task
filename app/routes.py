@@ -32,7 +32,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password.')
+            flash("Invalid username or password.")
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
@@ -76,7 +76,13 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route("/account")
+@app.route('/account')
 @login_required
 def account():
     return render_template('account.html', title='Account')
+
+
+@app.route('/admin')
+@login_required
+def admin():
+    return redirect(url_for('login'))

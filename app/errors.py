@@ -1,13 +1,12 @@
-from flask import render_template
-from app import app, db
+from flask import render_template, make_response
+from app import app
 
 
 @app.errorhandler(404)
-def not_found_error(error):
-    return render_template("404.html"), 404
+def not_found():
+    return make_response(render_template("404.html"), 404)
 
 
 @app.errorhandler(500)
-def internal_error(error):
-    db.session.rollback()
-    return render_template("500.html"), 500
+def server_error():
+    return make_response(render_template("500.html"), 500)
