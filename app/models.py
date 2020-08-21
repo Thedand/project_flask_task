@@ -29,41 +29,43 @@ class User(UserMixin, db.Model):
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
     tasks = db.relationship('Task', backref="author", lazy="dynamic")
 
-    def __repr__(self):
-        return "<User {}>".format(self.username)
-
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def __repr__(self):
+        return "<User {}>".format(self.username)
+
 
 # Role
 class Role(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(64), unique=True)
-    description = db.Column(db.String(64))
+    description = db.Column(db.String(128))
 
 
 # Task Model
 class Task(db.Model):
-    item_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    task_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(200), nullable=False)
     lower_limit = db.Column(db.Float)
     upper_limit = db.Column(db.Float)
     created_at = db.Column(db.Float)
-    updated_at = db.Column(db.DateTime)
-    created_by = db.Column(db.DateTime, default=datetime.utcnow)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    date_updated = db.Column(db.DateTime)
-    date_delete = db.Column(db.DateTime)
+    updated_at = db.Column(db.TIMESTAMP, default=datetime.utcnow())
+    created_by = db.Column(db.TIMESTAMP, default=datetime.utcnow())
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    def __init__(self, title, description, lower_limit, upper_limit, created_at, created_by, user_id):
+        self.title = title
+        self.description = description
+        self.lower_limit = lower_limit
+        self.upper_limit = upper_limit
+        self.created_at = created_at
+        self.created_by = created_by
+        self.user_id = user_id
 
     def __repr__(self):
         return "<Task {}>".format(self.title)
-
-    def __init__(self, title, description):
-        self.title = title
-        self.description = description
