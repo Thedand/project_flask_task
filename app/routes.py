@@ -7,7 +7,7 @@ from werkzeug.urls import url_parse
 
 from app import app, db
 from app.forms import LoginForm, RegistrationForm
-from app.models import User
+from app.models import User, Task
 
 
 @app.before_request
@@ -86,3 +86,30 @@ def account():
 @login_required
 def admin():
     return redirect(url_for('login'))
+
+
+@app.route('/create', methods=['GET', 'POST'])
+@login_required
+def create():
+    if current_user.is_superuser:
+        return redirect(url_for('index'))
+    else:
+        return abort(404)
+
+
+@app.route('/update', methods=['GET', 'POST'])
+@login_required
+def update():
+    if current_user.is_superuser:
+        return redirect(url_for('index'))
+    else:
+        return abort(404)
+
+
+@app.route('/delete', methods=['GET', 'POST'])
+@login_required
+def delete():
+    if current_user.is_superuser:
+        return redirect(url_for('index'))
+    else:
+        return abort(404)

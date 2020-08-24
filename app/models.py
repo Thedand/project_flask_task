@@ -1,7 +1,8 @@
-from datetime import datetime
+# from datetime import datetime
 
 from flask_login import UserMixin
-from flask_security import RoleMixin
+# from flask_security import RoleMixin
+from sqlalchemy import func
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login
@@ -13,10 +14,10 @@ def load_user(user_id):
 
 
 # self-join
-roles_users = db.Table('roles_users',
-                       db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
-                       db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
-                       )
+# roles_users = db.Table('roles_users',
+#                        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+#                        db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
+#                        )
 
 
 # User Model
@@ -26,7 +27,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128), nullable=False)
     is_active = db.Column(db.Boolean, default=False)
     is_superuser = db.Column(db.Boolean, default=False)
-    roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
+    # roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
     tasks = db.relationship('Task', backref="author", lazy="dynamic")
 
     def set_password(self, password):
@@ -40,10 +41,10 @@ class User(UserMixin, db.Model):
 
 
 # Role
-class Role(db.Model, RoleMixin):
-    id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(64), unique=True)
-    description = db.Column(db.String(128))
+# class Role(db.Model, RoleMixin):
+#     id = db.Column(db.Integer(), primary_key=True)
+#     name = db.Column(db.String(64), unique=True)
+#     description = db.Column(db.String(128))
 
 
 # Task Model
@@ -54,8 +55,8 @@ class Task(db.Model):
     lower_limit = db.Column(db.Float)
     upper_limit = db.Column(db.Float)
     created_at = db.Column(db.Float)
-    updated_at = db.Column(db.TIMESTAMP, default=datetime.utcnow())
-    created_by = db.Column(db.TIMESTAMP, default=datetime.utcnow())
+    updated_at = db.Column(db.TIMESTAMP, onupdate=func.utc())
+    created_by = db.Column(db.TIMESTAMP, default=func.utcnow())
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     def __init__(self, title, description, lower_limit, upper_limit, created_at, created_by, user_id):

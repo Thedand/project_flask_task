@@ -18,12 +18,12 @@ login = LoginManager(app)
 login.login_view = 'login'
 
 from app.routes import Controller
-from app.models import Task, User, Role
+from app.models import Task, User  #Role
 
 admin = Admin(app, name='Task Manager', template_mode='bootstrap3')
 admin.add_view(Controller(Task, db.session))
 admin.add_view(Controller(User, db.session))
-admin.add_view(Controller(Role, db.session))
+# admin.add_view(Controller(Role, db.session))
 
 # Create an account Admin(superuser) and Guest(user)
 db.create_all()
