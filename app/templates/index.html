@@ -1,9 +1,32 @@
-<html lang="en">
-<body>
 {% extends "base.html" %}
-
 {% block content %}
-    <h1>Hello, {{ current_user.username }}!</h1>
-{% endblock %}
-</body>
-</html>
+    <div class="col-md-12">
+    <table class="table table-striped">
+        <tr>
+            <th scope="col">Viewing list of tasks</th>
+            <th scope="col">Viewing task details</th>
+            <th scope="col">Created By</th>
+            <th scope="col">Updated At</th>
+{#            {% if current_user.is_superuser == True %}#}
+            <th scope="col">Action</th>
+{#            {% endif %}#}
+        </tr>
+
+        {% for task in tasks %}
+            <tr class="data-hover">
+                <td>{{ task.title }}</td>
+                <td>{{ task.description }}</td>
+                <td>{{ task.created_by }}</td>
+                <td>{{ task.updated_at }}</td>
+                <td>
+{#                    {% if current_user.is_superuser == True %}#}
+                    <a href="{{ url_for('update', id=task.id) }}" class="btn btn-primary btn-xs">Update</a>
+                    <a href="{{ url_for('delete', id=task.id) }}" class="btn btn-danger btn-xs"
+                       onclick="return confirm('Are You Sure To Delete ?')">Delete</a></td>
+{#                    {% endif %}#}
+            </tr>
+            {% else %}
+        {% endfor %}
+    </table>
+    </div>
+{% endblock content %}

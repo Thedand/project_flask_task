@@ -6,7 +6,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, TaskForm
 from app.models import User, Task
 
 
@@ -17,11 +17,24 @@ def before_request():
         db.session.commit()
 
 
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/home', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
+def home():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    else:
+        return render_template('home.html')
+
+
+@app.route('/index', methods=['GET'])
 @login_required
 def index():
-    return render_template('home.html', title='Home')
+    q = request.args.get('q')
+
+    if q:
+        tasks = Task.query.filter(Task.title.contains(q) | Task.description.contains(q)).all()
+    else:
+        tasks = Task.query.order_by(Task.created_by.desc())
+    return render_template('index.html', tasks=tasks)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -39,7 +52,7 @@ def login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
-    return render_template('login.html', title='Login', form=form)
+    return render_template('auth/login.html', title='Login', form=form)
 
 
 class Controller(ModelView):
@@ -47,11 +60,8 @@ class Controller(ModelView):
         if current_user.is_superuser:
             return current_user.is_authenticated
         else:
-            return abort(404)
-
-
-def not_auth():
-    return "not!"
+            abort(403)
+        return redirect(url_for('index'))
 
 
 @app.route('/registration', methods=['GET', 'POST'])
@@ -60,20 +70,22 @@ def registration():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data)
+        user = User(username=form.username.data,
+                    is_active=True, is_superuser=False)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash("Congratulations! You are now a registered user.")
+        flash("Congratulations! You are now a registered user.", "success")
         return redirect(url_for('login'))
-    return render_template('registration.html', title='Registration', form=form)
+    return render_template('auth/registration.html',
+                           title='Registration', form=form)
 
 
 @app.route('/logout')
 def logout():
     logout_user()
-    flash('You have been logged out.')
-    return redirect(url_for('index'))
+    flash("You have been logged out.", "success")
+    return redirect(url_for('home'))
 
 
 @app.route('/account')
@@ -82,34 +94,70 @@ def account():
     return render_template('account.html', title='Account')
 
 
+# Block /admin is not superuser
 @app.route('/admin')
 @login_required
 def admin():
-    return redirect(url_for('login'))
+    if current_user.is_superuser:
+        pass
+    else:
+        abort(403)
+    return redirect(url_for('home'))
 
 
-@app.route('/create', methods=['GET', 'POST'])
+# Create Task
+@app.route('/task/create', methods=['GET', 'POST'])
 @login_required
 def create():
     if current_user.is_superuser:
-        return redirect(url_for('index'))
+        pass
     else:
-        return abort(404)
+        return abort(403)
+    form = TaskForm()
+    if form.validate_on_submit():
+        task = Task(title=form.title.data,
+                    description=form.description.data,
+                    lower_limit=form.lower_limit.data,
+                    upper_limit=form.upper_limit.data,
+                    created_at=form.created_at.data,
+                    user_id=form.user_id.data)
+        db.session.add(task)
+        db.session.commit()
+        flash("Your task has been created!", "success")
+        return redirect(url_for('index'))
+    return render_template('create.html', title='New Task',
+                           form=form, legend='New Task')
 
 
-@app.route('/update', methods=['GET', 'POST'])
+# Update Task
+@app.route('/task/<int:id>/update/', methods=['GET', 'POST'])
 @login_required
-def update():
+def update(id):
     if current_user.is_superuser:
-        return redirect(url_for('index'))
+        pass
     else:
-        return abort(404)
+        return abort(403)
+    task = Task.query.filter(Task.id == id).first()
+    if request.method == 'POST':
+        form = TaskForm(formdata=request.form, obj=id)
+        form.populate_obj(task)
+        db.session.commit()
+        flash("Your task has been updated!", "success")
+        return redirect(url_for('index', id=task.id))
+    form = TaskForm(obj=task)
+    return render_template('update.html', task=task, form=form)
 
 
-@app.route('/delete', methods=['GET', 'POST'])
+# Task Deletion
+@app.route('/task/<int:id>/delete', methods=['GET', 'POST'])
 @login_required
-def delete():
+def delete(id):
     if current_user.is_superuser:
-        return redirect(url_for('index'))
+        pass
     else:
-        return abort(404)
+        return abort(403)
+    task = Task.query.get_or_404(id)
+    db.session.delete(task)
+    db.session.commit()
+    flash("Your task has been deleted!", "success")
+    return redirect(url_for('index'))

@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+
+from wtforms import StringField, PasswordField, TextAreaField, BooleanField, SubmitField, FloatField, DateTimeField
 from wtforms.validators import ValidationError, DataRequired, EqualTo
 
 from app.models import User
@@ -22,3 +25,12 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(username=username.data).first()
         if user is not None:
             raise ValidationError('Please use a different username.')
+
+
+class TaskForm(FlaskForm):
+    title = StringField('Task', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    lower_limit = FloatField('Lower limit', validators=[DataRequired()])
+    upper_limit = FloatField('Upper limit', validators=[DataRequired()])
+    created_at = FloatField('Created at', validators=[DataRequired()])
+    user_id = FloatField('User ID', validators=[DataRequired()])

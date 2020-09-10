@@ -8,51 +8,40 @@
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
 
-    {% if title %}
-        <title>Task Manager - {{ title }}</title>
-    {% else %}
-        <title>Task Manager</title>
-    {% endif %}
+    <title>Task Manager</title>
+
 </head>
 <body>
 <header class="site-header">
     <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
         <div class="container">
-            <a class="navbar-brand mr-4" href="/">Task Manager</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarToggle">
-                <div class="navbar-nav mr-auto">
-                    <a class="nav-item nav-link" href="{{ url_for('index') }}">HOME</a>
-                </div>
-
-                <div class="navbar-nav">
-                    {% if current_user.is_authenticated %}
-                        {% if current_user.is_superuser == True %}
-                        <a class="nav-item nav-link" href="{{ url_for('admin.index') }}">Admin</a>
-                            {% else %}
-                            {% endif %}
-                        <a class="nav-item nav-link" href="{{ url_for('account') }}">Account</a>
-                        <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
-                    {% else %}
-                        <a class="nav-item nav-link" href="{{ url_for('login') }}">LOG IN</a>
-                        <a class="nav-item nav-link" href="{{ url_for('registration') }}">SIGN UP</a>
-                    {% endif %}
-                </div>
-            </div>
+            <a href="{{ url_for('home') }}"
+               class="btn btn-outline-light">Task Manager</a>
+        </div>
+        <div class="login-panel">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('create') }}"
+                   class="btn btn-success">Create Task</a>
+                <a href="{{ url_for('account') }}"
+                   class="btn btn-light">Hello, {{ current_user.username }}</a>
+                <a href="{{ url_for('logout') }}"
+                   class="btn btn-light">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}"
+                   class="btn btn-light">Login</a>
+            {% endif %}
         </div>
     </nav>
 </header>
-<main role="main" class="container">
+<main role="main" class="container-xl">
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12">
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     <div class="flashes">
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">{{ message }}</div>
-                    {% endfor %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
                     </div>
                 {% endif %}
             {% endwith %}
