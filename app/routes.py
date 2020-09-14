@@ -45,7 +45,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash("Invalid username or password.")
+            flash("Invalid username or password.", "success")
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
@@ -113,7 +113,9 @@ def create():
         pass
     else:
         return abort(403)
+    user_list = [(i.id, i.username) for i in User.query.all()]  # List users for create task
     form = TaskForm()
+    form.user_id.choices = user_list
     if form.validate_on_submit():
         task = Task(title=form.title.data,
                     description=form.description.data,
@@ -130,13 +132,14 @@ def create():
 
 
 # Update Task
-@app.route('/task/<int:id>/update/', methods=['GET', 'POST'])
+@app.route('/task/<int:id>/update', methods=['GET', 'POST'])
 @login_required
 def update(id):
     if current_user.is_superuser:
         pass
     else:
         return abort(403)
+    user_list = [(i.id, i.username) for i in User.query.all()]  # List users for update task
     task = Task.query.filter(Task.id == id).first()
     if request.method == 'POST':
         form = TaskForm(formdata=request.form, obj=id)
@@ -145,6 +148,7 @@ def update(id):
         flash("Your task has been updated!", "success")
         return redirect(url_for('index', id=task.id))
     form = TaskForm(obj=task)
+    form.user_id.choices = user_list
     return render_template('update.html', task=task, form=form)
 
 

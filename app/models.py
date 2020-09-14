@@ -13,7 +13,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128), nullable=False)
     is_active = db.Column(db.Boolean, default=False)
     is_superuser = db.Column(db.Boolean, default=False)
-    tasks = db.relationship('Task', backref="author", lazy="dynamic")
+    can_review_tasks = db.relationship('Task', backref="author", lazy="dynamic")
 
     def __repr__(self):
         return "<User {}>".format(self.username)

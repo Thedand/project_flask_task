@@ -1,9 +1,7 @@
-from datetime import datetime
-
 from flask_wtf import FlaskForm
 
-from wtforms import StringField, PasswordField, TextAreaField, BooleanField, SubmitField, FloatField, DateTimeField
-from wtforms.validators import ValidationError, DataRequired, EqualTo
+from wtforms import StringField, PasswordField, TextAreaField, BooleanField, SubmitField, FloatField, SelectField
+from wtforms.validators import ValidationError, DataRequired, EqualTo, InputRequired
 
 from app.models import User
 
@@ -33,4 +31,4 @@ class TaskForm(FlaskForm):
     lower_limit = FloatField('Lower limit', validators=[DataRequired()])
     upper_limit = FloatField('Upper limit', validators=[DataRequired()])
     created_at = FloatField('Created at', validators=[DataRequired()])
-    user_id = FloatField('User ID', validators=[DataRequired()])
+    user_id = SelectField('User', coerce=str, validators=[InputRequired()])
