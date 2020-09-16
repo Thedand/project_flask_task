@@ -16,8 +16,12 @@
             <tr class="data-hover">
                 <td>{{ task.title }}</td>
                 <td>{{ task.description }}</td>
-                <td>{{ task.created_by }}</td>
-                <td>{{ task.updated_at }}</td>
+                <td>{{ task.created_by.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>
+                    {%  if task.updated_at %}
+                    {{ task.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                    {% else %}{% endif %}
+                </td>
                 <td>
 {#                    {% if current_user.is_superuser == True %}#}
                     <a href="{{ url_for('update', id=task.id) }}" class="btn btn-primary btn-xs">Update</a>

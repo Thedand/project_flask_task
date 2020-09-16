@@ -3,7 +3,12 @@
     <h1>Hi, {{ current_user.username }}!</h1>
     <h2>The page is under construction ;)</h2>
     {% if current_user.is_superuser == True %}
-    <p><a href="{{ url_for('admin.index') }}">Go to the administration panel</a></p>
-     {% else %}
-     {% endif %}
+        <p><a href="{{ url_for('admin.index') }}">Go to the administration panel</a></p>
+    {% else %}
+    {% endif %}
+    {% if current_user.can_review_tasks == True %}
+        <p><a href="{{ url_for('can_review_tasks') }}">
+            You can go to the list of usernames and amount of their tasks</a></p>
+    {% else %}
+    {% endif %}
 {% endblock content %}

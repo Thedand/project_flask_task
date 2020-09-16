@@ -37,6 +37,18 @@ def index():
     return render_template('index.html', tasks=tasks)
 
 
+# Add view with a list of usernames and amount of their tasks
+@app.route('/crt', methods=['GET', 'POST'])
+@login_required
+def can_review_tasks():
+    if current_user.can_review_tasks:
+        pass
+    else:
+        return abort(403)
+    users = db.session.query(User).all()
+    return render_template('crt.html', users=users)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -52,7 +64,7 @@ def login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
-    return render_template('auth/login.html', title='Login', form=form)
+    return render_template('auth/login.html', form=form)
 
 
 class Controller(ModelView):
@@ -71,14 +83,14 @@ def registration():
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data,
-                    is_active=True, is_superuser=False)
+                    is_active=True, is_superuser=False,
+                    can_review_tasks=False)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
         flash("Congratulations! You are now a registered user.", "success")
         return redirect(url_for('login'))
-    return render_template('auth/registration.html',
-                           title='Registration', form=form)
+    return render_template('auth/registration.html', form=form)
 
 
 @app.route('/logout')
@@ -149,7 +161,8 @@ def update(id):
         return redirect(url_for('index', id=task.id))
     form = TaskForm(obj=task)
     form.user_id.choices = user_list
-    return render_template('update.html', task=task, form=form)
+    return render_template('update.html', title='Update Task',
+                           form=form, task=task, legend='Update Task')
 
 
 # Task Deletion

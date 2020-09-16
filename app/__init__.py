@@ -28,9 +28,11 @@ admin.add_view(Controller(User, db.session))
 db.create_all()
 db.session.commit()
 try:
-    admin = User(username='admin', is_active=True, is_superuser=True)
+    admin = User(username='admin', is_active=True,
+                 is_superuser=True, can_review_tasks=True)
     admin.set_password('admin')
-    guest = User(username='guest', is_active=True, is_superuser=False)
+    guest = User(username='guest', is_active=True,
+                 is_superuser=False, can_review_tasks=False)
     guest.set_password('guest')
     db.session.add(admin)
     db.session.add(guest)

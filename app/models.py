@@ -13,15 +13,17 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128), nullable=False)
     is_active = db.Column(db.Boolean, default=False)
     is_superuser = db.Column(db.Boolean, default=False)
-    can_review_tasks = db.relationship('Task', backref="author", lazy="dynamic")
+    can_review_tasks = db.Column(db.Boolean, default=False)
+    tasks = db.relationship('Task', backref='user', lazy='dynamic')
 
     def __repr__(self):
         return "<User {}>".format(self.username)
 
-    def __init__(self, username, is_active, is_superuser):
+    def __init__(self, username, is_active, is_superuser, can_review_tasks):
         self.username = username
         self.is_active = is_active
         self.is_superuser = is_superuser
+        self.can_review_tasks = can_review_tasks
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -45,8 +47,8 @@ class Task(db.Model):
     upper_limit = db.Column(db.Float)
     created_at = db.Column(db.Float)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
-    created_by = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    created_by = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
         return "<Task {}>".format(self.title)
