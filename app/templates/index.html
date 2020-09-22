@@ -1,36 +1,33 @@
 {% extends "base.html" %}
 {% block content %}
     <div class="col-md-12">
-    <table class="table table-striped">
-        <tr>
-            <th scope="col">Viewing list of tasks</th>
-            <th scope="col">Viewing task details</th>
-            <th scope="col">Created By</th>
-            <th scope="col">Updated At</th>
-{#            {% if current_user.is_superuser == True %}#}
-            <th scope="col">Action</th>
-{#            {% endif %}#}
-        </tr>
-
-        {% for task in tasks %}
-            <tr class="data-hover">
-                <td>{{ task.title }}</td>
-                <td>{{ task.description }}</td>
-                <td>{{ task.created_by.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                <td>
-                    {%  if task.updated_at %}
-                    {{ task.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}
-                    {% else %}{% endif %}
-                </td>
-                <td>
-{#                    {% if current_user.is_superuser == True %}#}
-                    <a href="{{ url_for('update', id=task.id) }}" class="btn btn-primary btn-xs">Update</a>
-                    <a href="{{ url_for('delete', id=task.id) }}" class="btn btn-danger btn-xs"
-                       onclick="return confirm('Are You Sure To Delete ?')">Delete</a></td>
-{#                    {% endif %}#}
+        <table class="table table-striped">
+            <tr>
+                <th scope="col">Viewing list of tasks</th>
+                <th scope="col">Viewing task details</th>
+                <th scope="col">Created By</th>
+                <th scope="col">Updated At</th>
+                <th scope="col">Action</th>
             </tr>
+            {% for task in tasks %}
+                <tr class="data-hover">
+                    <td>{{ task.title }}</td>
+                    <td>{{ task.description }}</td>
+                    <td>{{ task.created_by.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>
+                        {% if task.updated_at %}
+                            {{ task.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                        {% else %}{% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('update', task_id=task.id) }}" class="btn btn-primary btn-xs">Update</a>
+                        <form action="{{ url_for('delete', task_id=task.id) }}" method="POST">
+                            <input class="btn btn-danger" type="submit" value="Delete">
+                        </form>
+                    </td>
+                </tr>
             {% else %}
-        {% endfor %}
-    </table>
+            {% endfor %}
+        </table>
     </div>
 {% endblock content %}

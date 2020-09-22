@@ -3,7 +3,6 @@ from flask_admin import Admin
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.exc import IntegrityError
 
 from config import Config
 
@@ -24,20 +23,8 @@ admin = Admin(app, name='Task Manager', template_mode='bootstrap3')
 admin.add_view(Controller(Task, db.session))
 admin.add_view(Controller(User, db.session))
 
-# Create an account Admin(superuser) and Guest(user)
+# Create DB
 db.create_all()
 db.session.commit()
-try:
-    admin = User(username='admin', is_active=True,
-                 is_superuser=True, can_review_tasks=True)
-    admin.set_password('admin')
-    guest = User(username='guest', is_active=True,
-                 is_superuser=False, can_review_tasks=False)
-    guest.set_password('guest')
-    db.session.add(admin)
-    db.session.add(guest)
-    db.session.commit()
-except IntegrityError:
-    db.session.rollback()
 
-from app import routes, models, errors
+from app import errors
