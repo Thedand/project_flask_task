@@ -1,17 +1,17 @@
 # Task Manager
 
-###Introduction
+### Introduction
 
 This is a task manager application, implemented using Flask with both the database (PostgreSQL). It also has user registration and authentication functionalities.
 It is also available to create, update and delete tasks using the only superuser access flag. You can view the list of users and the number of their tasks with 
 superuser access and users with access flag.
 
-###Demo
+### Demo
 
 ![app](https://user-images.githubusercontent.com/17044897/93980229-08e72600-fd87-11ea-92d0-977d5ca532bd.gif)
 
 
-###Files in the program
+### Files in the program
 - main.py: Run app.
 - config.py: Contains settings.
 - routes.py: This is contains both the registration/login page logic, create/update/delete task and review task.
@@ -23,9 +23,9 @@ superuser access and users with access flag.
 - static/: for with all CSS files, JS scripts and Demo gif.
 
 
-##Usage
+## Usage
 
-##Modify app
+## Modify app
 
 Modify config.py to replace the secret key (i.e. os.environ.get('SECRET')) with a secret key of your choice
 and the database link (i.e. os.environ.get('DATABASE_URL')) with the link to your own database.
@@ -37,7 +37,7 @@ app.secret_key=os.environ.get('SECRET')
 app.config['SQLALCHEMY_DATABASE_URI']=os.environ.get('DATABASE_URL')
 ```
 
-##Installations from the terminal
+## Installations from the terminal
 ```shell script
 mkdir Projects
 cd Projects
@@ -48,13 +48,13 @@ pip install -r requirements.txt
 python main.py
 ```
 
-####Import in python console
+#### Import in python console
 ```python
 > from app import app, db
 > from app.models import User
 > from app.routes import User
 ```
-####Add superuser
+#### Add superuser
 ```python
 > admin = User(username='admin', is_active=True, is_superuser=True, can_review_tasks=True)
 > admin.set_password('admin')
