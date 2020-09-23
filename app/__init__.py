@@ -23,8 +23,4 @@ admin = Admin(app, name='Task Manager', template_mode='bootstrap3')
 admin.add_view(Controller(Task, db.session))
 admin.add_view(Controller(User, db.session))
 
-# Create DB
-db.create_all()
-db.session.commit()
-
 from app import errors
