@@ -1,12 +1,7 @@
-from app import app
-from app import db
-
-
-def main():
-    # Create DB
-    db.create_all()
-    db.session.commit()
+from app import app, db
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Create tables
+    db.create_all()
+    app.run(host='0.0.0.0', port=5000, debug=True)

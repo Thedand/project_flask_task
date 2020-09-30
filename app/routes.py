@@ -97,8 +97,12 @@ def registration():
         password_hash = generate_password_hash(password)
 
         # Add username & hashed password to DB
+        # Created default settings users with flags(active, superuser, can_review_tasks)
         user = User(username=username,
-                    password_hash=password_hash)
+                    password_hash=password_hash,
+                    is_active=True,
+                    is_superuser=True,
+                    can_review_tasks=True)
         db.session.add(user)
         db.session.commit()
 
