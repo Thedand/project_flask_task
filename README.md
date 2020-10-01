@@ -21,20 +21,38 @@ superuser access and users with access flag.
 - requirements.txt: list of Python packages installed.
 - templates/: folder with all HTML files
 - static/: for with all CSS files, JS scripts and Demo gif.
+- database.cong: setting db
+- Dockerfile: for build app
+- docker-compose.yml: for build app, db and their connections
 
 
 ## Usage
 
 ## Modify app
 
-Modify config.py to replace the secret key (i.e. os.environ.get('SECRET')) with a secret key of your choice
-and the database link (i.e. os.environ.get('DATABASE_URL')) with the link to your own database.
-
-The two lines to be edited in config.py are shown below:
+Modify database.conf
 
 ```
-app.secret_key=os.environ.get('SECRET')
-app.config['SQLALCHEMY_DATABASE_URI']=os.environ.get('DATABASE_URL')
+POSTGRES_USER=postgres #default username
+POSTGRES_PASSWORD=1591 #default password
+POSTGRES_HOST=localhost #default or your url
+POSTGRES_PORT=5432 #default or your port
+POSTGRES_DB=db #default or your database
+```
+
+Modify docker-compose.yml
+
+```
+environment:
+- POSTGRES_USER=postgres #database.conf
+- POSTGRES_PASSWORD=1591 #database.conf
+- POSTGRES_HOST=db #database.conf
+- POSTGRES_PORT=5432 #database.conf
+- POSTGRES_DB=db #database.conf
+
+OR use instead environment
+
+env_file: database.conf
 ```
 
 ## Installations from the terminal
@@ -45,21 +63,37 @@ git clone https://github.com/Thedand/project_flask_task.git
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-python main.py
 ```
 
-#### Import in python console
-```python
-> from app import app, db
-> from app.models import User
-> from app.routes import User
-```
-#### Add superuser
-```python
-> admin = User(username='admin', is_active=True, is_superuser=True, can_review_tasks=True)
-> admin.set_password('admin')
-> db.session.add(admin)
-> db.session.commit()
-```
+#### Installation docker and docker-compose
 
-Then simply open up a browser, Chrome/Chromium recommended, to [127.0.0.1:5000](https://127.0.0.1:5000/) / [localhost:5000](https://localhost:5000/)
+[Install Docker](https://docs.docker.com/get-docker/)
+
+[Install Docker Compose](https://docs.docker.com/compose/install/)
+
+#### Install using terminal
+
+
+`cd project_flask_task`
+
+`docker-compose up --build` frontend usage or build project
+
+While the app and database are being created
+
+Here are the commands to access the application and database
+
+`docker exec -it project_flask_task_db_1 psql -U postgres` - access in Postgresql
+
+`docker exec -it project_flask_task_app_1 bash` - access in app use bash
+
+#### The default user is created with access flags
+```
+is_active=True - active, can log in task manager.
+is_superuser=True - superuser, can create, edit and delete tasks.
+can_review_tasks=True - can_review_tasks, can access to the number of tasks.
+```
+`you can change these access flags in routes.py -> User Registration`
+
+
+#### Welcome to page Task Manager
+`Then simply open up a browser, Chrome/Chromium recommended, to` [127.0.0.1:5000](https://127.0.0.1:5000/) / [localhost:5000](https://localhost:5000/)
