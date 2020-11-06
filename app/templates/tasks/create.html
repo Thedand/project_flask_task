@@ -1,8 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'main/base.html' %}
 {% block content %}
     <div class="col-md-6">
     <legend class="border-bottom mb-4">{{ legend }}</legend>
-        <form action="{{ url_for('update', task_id=task.id) }}" method="POST">
+        <form action="{{ url_for('tasks.create') }}" method="POST">
             {% for field in form if field.widget.input_type != 'hidden' %}
                 <div class="form-group">
                     {{ form.hidden_tag() }}
@@ -10,7 +10,7 @@
                     {{ field(class='form-control') }}
                 </div>
             {% endfor %}
-            <button type="submit" class="btn btn-success">Update</button>
+            <button type="submit" class="btn btn-success">Create</button>
         </form>
     </div>
 {% endblock content %}

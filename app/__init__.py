@@ -6,21 +6,49 @@ from flask_sqlalchemy import SQLAlchemy
 
 from config import Config
 
-app = Flask(__name__)
-app.config.from_object(Config)
+db = SQLAlchemy()
+migrate = Migrate()
 
-# Database Initialization
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+login = LoginManager()
+login.login_view = 'users.login'
+login.login_message_category = 'info'
 
-login = LoginManager(app)
-login.login_view = 'login'
 
-from app.routes import Controller
-from app.models import Task, User
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
 
-admin = Admin(app, name='Task Manager', template_mode='bootstrap3')
-admin.add_view(Controller(Task, db.session))
-admin.add_view(Controller(User, db.session))
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login.init_app(app)
 
-from app import errors
+    with app.app_context():
+        from app.models import User, Task
+
+        db.create_all()
+
+        from app.main.routes import main
+        from app.users.routes import users
+        from app.tasks.routes import tasks
+        from app.errors.handlers import errors
+        app.register_blueprint(main)
+        app.register_blueprint(users)
+        app.register_blueprint(tasks)
+        app.register_blueprint(errors)
+
+        from app.main.routes import Controller
+
+        admin = Admin(app, name='Task Manager', template_mode='bootstrap3')
+        admin.add_view(Controller(Task, db.session))
+        admin.add_view(Controller(User, db.session))
+
+        # Loading User
+        @login.user_loader
+        def load_user(user_id):
+            if user_id is not None:
+                return db.session.query(User).get(int(user_id))
+            return None
+
+        from app import errors
+
+        return app

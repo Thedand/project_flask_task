@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "main/base.html" %}
 {% block content %}
     <div class="col-md-12">
         <table class="table table-striped">
@@ -20,8 +20,8 @@
                         {% else %}{% endif %}
                     </td>
                     <td>
-                        <a href="{{ url_for('update', task_id=task.id) }}" class="btn btn-primary btn-xs">Update</a>
-                        <form action="{{ url_for('delete', task_id=task.id) }}" method="POST">
+                        <a href="{{ url_for('tasks.update', task_id=task.id) }}" class="btn btn-primary btn-xs">Update</a>
+                        <form action="{{ url_for('tasks.delete', task_id=task.id) }}" method="POST">
                             <input class="btn btn-danger" type="submit" value="Delete">
                         </form>
                     </td>
