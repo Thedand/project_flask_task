@@ -10,24 +10,6 @@ superuser access and users with access flag.
 
 ![app](https://user-images.githubusercontent.com/17044897/93980229-08e72600-fd87-11ea-92d0-977d5ca532bd.gif)
 
-
-### Files in the program
-- main.py: Run app.
-- config.py: Contains settings.
-- routes.py: This is contains both the registration/login page logic, create/update/delete task and review task.
-- models.py: Contains Flask-SQLAlchemy models used for user registration/login and task in routes.py
-- forms.py: Contains the classes for WTForms/Flask-WTF and the custom validators for the fields.
-- error.py: Contains errorhandler.
-- requirements.txt: list of Python packages installed.
-- templates/: folder with all HTML files
-- static/: for with all CSS files, JS scripts and Demo gif.
-- database.cong: setting db
-- Dockerfile: for build app
-- docker-compose.yml: for build app, db and their connections
-
-
-## Usage
-
 ## Modify app
 
 Modify database.conf

@@ -23,7 +23,8 @@ def create_app():
     login.init_app(app)
 
     with app.app_context():
-        from app.models import User, Task
+        from app.users.models import User
+        from app.tasks.models import Task
 
         db.create_all()
 

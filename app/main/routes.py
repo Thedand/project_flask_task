@@ -3,7 +3,8 @@ from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, login_required
 
 from app import db
-from app.models import User, Task
+from app.users.models import User
+from app.tasks.models import Task
 
 main = Blueprint('main', __name__)
 

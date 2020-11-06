@@ -2,8 +2,9 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import current_user, login_required
 
 from app import db
-from app.forms import TaskForm
-from app.models import User, Task
+from app.tasks.forms import TaskForm
+from app.users.models import User
+from app.tasks.models import Task
 
 tasks = Blueprint('tasks', __name__)
 

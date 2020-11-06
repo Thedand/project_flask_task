@@ -1,12 +1,11 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, \
-    BooleanField, SubmitField, TextAreaField, \
-    FloatField, SelectField
+    BooleanField, SubmitField
 from wtforms.validators import InputRequired, \
     EqualTo, ValidationError
 
 from app import db
-from app.models import User
+from app.users.models import User
 
 
 class LoginForm(FlaskForm):
@@ -33,13 +32,3 @@ class RegistrationForm(FlaskForm):
         user_object = db.session.query(User).filter_by(username=username.data).first()
         if user_object:
             raise ValidationError('Username already exists. Select a different username.')
-
-
-class TaskForm(FlaskForm):
-    """ Task Form """
-    title = StringField('Task', validators=[InputRequired()])
-    description = TextAreaField('Description', validators=[InputRequired()])
-    lower_limit = FloatField('Lower limit', validators=[InputRequired()])
-    upper_limit = FloatField('Upper limit', validators=[InputRequired()])
-    created_at = FloatField('Created at', validators=[InputRequired()])
-    user_id = SelectField('User', coerce=str, validators=[InputRequired()])
